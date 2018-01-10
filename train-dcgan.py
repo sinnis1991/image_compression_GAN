@@ -28,6 +28,7 @@ flags.DEFINE_string("sample_dir", "samples", "Directory name to save the image s
 flags.DEFINE_integer("z_dim", 100, "Define the z dim[z_dim]")
 flags.DEFINE_integer("gf_dim", 64, "Define the gf dim[gf_dim]")
 flags.DEFINE_integer("df_dim", 64, "Define the df dim[df_dim]")
+flags.DEFINE_integer("c_bits", 8, "Define the bits for every entry")
 
 FLAGS = flags.FLAGS
 
@@ -36,19 +37,21 @@ if not os.path.exists(FLAGS.checkpoint_dir):
 if not os.path.exists(FLAGS.sample_dir):
     os.makedirs(FLAGS.sample_dir)
 
-FLAGS.checkpoint_dir = './checkpoint_cars_z100_d64_withMoreExample'
-FLAGS.dataset = "./image_data/cars/tumbnail"
+FLAGS.checkpoint_dir = './checkpoint/SVHN_full'
+FLAGS.dataset = "./image_data/SVHN_data/full_image_test"
 FLAGS.z_dim = 100
-FLAGS.gf_dim = 128
-FLAGS.df_dim = 128
-FLAGS.epoch = 500
-FLAGS.image_size = 64
+FLAGS.gf_dim = 64
+FLAGS.df_dim = 64
+FLAGS.epoch = 10
+FLAGS.image_size = 32
+FLAGS.batch_size = 64
+# FLAGS.simple_size =128
 
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 with tf.Session(config=config) as sess:
     dcgan = DCGAN(sess, image_size=FLAGS.image_size, batch_size=FLAGS.batch_size,
                   is_crop=False, checkpoint_dir=FLAGS.checkpoint_dir, z_dim=FLAGS.z_dim,
-                  gf_dim=FLAGS.gf_dim,df_dim=FLAGS.df_dim)
+                  gf_dim=FLAGS.gf_dim,df_dim=FLAGS.df_dim,c_bits=FLAGS.c_bits)
 
     dcgan.train(FLAGS)
